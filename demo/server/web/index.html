@@ -1,0 +1,21 @@
+<!DOCTYPE HTML>
+<HTML>
+ <HEAD>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+  <TITLE>测试</TITLE>
+  <script type="text/javascript">
+    var newPage = null;
+	function openMeeting() {
+		newPage = window.open ('chatRoom.html', 'meet', 'height=600, width=550, top=0, left=0, toolbar=no, menubar=no, scrollbars=auto, location=no');
+		newPage.focus();
+	}
+  </script>
+ </HEAD>
+
+ <BODY>
+  <header><h1>node.js & html5 测试</h1>
+  <h2>请使用 chrome</h2>
+  </header>
+  <a href="javascript:openMeeting();" onclick="">进入聊天室</a>
+ </BODY>
+</HTML>

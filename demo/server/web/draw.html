@@ -1,0 +1,57 @@
+<!DOCTYPE HTML>
+<HTML>
+ <HEAD>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+  <TITLE>画板</TITLE>
+  <style>
+section {float:left; margin-left:10px;}
+canvas {background-color:white;border:1px solid silver;cursor:crosshair }
+.range {float:left; margin-left:10px;}
+#penContent {position: relative;margin-left:10px;float:left; width:21px; height:21px;border:1px solid silver;
+	-moz-border-radius: 10px;
+	-khtml-border-radius: 10px;
+	-webkit-border-radius: 10px;
+	border-radius: 10px;
+}
+#penContent .pen {background-color: black;position: absolute;}
+  </style>
+  <script src="/js/jquery-1.4.4.min.js"></script>
+  <script src="/js/drawBoard.js"></script>
+  <script type="text/javascript">
+
+$(document).ready(function(){
+	DrawBoard.init({
+		userCanvas : "userCanvas",
+		pen : "pen",
+		penRange : "penRange",
+		color : "color",
+		clearBtn : "clearBtn",
+		backBtn : "backBtn",
+		typePen : "typePen"
+	});
+});
+
+
+  </script>
+ </HEAD>
+
+<BODY>
+	<header><h1>html5 画板测试</h1></header>
+		<section class="canvasContent">
+			<canvas id="userCanvas" width="500" height="500"></canvas>
+		</section>
+		<section>
+			<h1>笔尖</h1>
+			<input id="penRange" class="range" type="range" min=1 max=21 step=2 value=3 >
+			<div id="penContent">
+				<div id="pen" class="pen"></div>
+			</div>
+			<br/><h1>颜色</h1>
+			<input id="color" type="color" value="#414de2">
+			<br/><h1>功能</h1>
+			<input type="radio" id="typePen" name="penType" checked>画笔
+			<input type="radio" id="typeEraser" name="penType">橡皮
+			<br/><button id="clearBtn" type="button">清空</button>
+	</section>
+</BODY>
+</HTML>

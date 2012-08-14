@@ -1,0 +1,123 @@
+<!DOCTYPE HTML>
+<HTML>
+ <HEAD>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+  <TITLE>闲聊工作室</TITLE>
+  <META NAME="Generator" CONTENT="EditPlus">
+  <META NAME="Author" CONTENT="">
+  <META NAME="Keywords" CONTENT="">
+  <META NAME="Description" CONTENT="">
+  <script src="/js/jquery-1.4.4.min.js"></script>
+  <script src="/js/socket.io.min.js"></script>
+  <script src="/js/chat.js"></script>
+  <script src="/js/drawBoard.js"></script>
+  <style>
+  header h1 {font-size:14px; padding-left:10px; color: silver}
+  header span.sTitle {font-size:12px; padding-left:80px; color: silver}
+  section > div {width:300px;height:400px; overflow-x: none;overflow-y: auto; border: 2px solid silver; float:left;}
+  section > div.userlist {width:170px; float:none;}
+  section ul {margin:10px 0 0 10px; padding:0}
+  section ul li {margin-top:5px; padding:3px; font-size:12px; list-style-type: none; white-space:pre-wrap; word-break: break-all;}
+  section ul li.shadow {background-color:#ECECEC}
+  section ul li.me {color:red}
+  section ul li.sys {color: white; background-color:#9E9E9E}
+  section ul li.server {}
+  footer {font-size:12px; }
+  footer textarea {width:298px;height:120px; margin-top:5px;}
+  footer #msgCanvas {display:none; height:120px;}
+  footer canvas {margin-top:5px; background-color:white;border:1px solid silver;cursor:crosshair;float:left}
+  footer button.send {margin-left:180px;}
+  footer span {font-size:12px; color:silver}
+  #penContent {position: relative;margin-left:10px;float:left; width:21px; height:21px;border:1px solid silver;
+		-moz-border-radius: 10px;
+		-khtml-border-radius: 10px;
+		-webkit-border-radius: 10px;
+		border-radius: 10px;
+	}
+  #penContent .pen {background-color: black;position: absolute;}
+  img.msgImg {border: 1px solid silver;}
+  </style>
+ </HEAD>
+
+ <BODY>
+  <section>
+  <div>
+  <ul id="content"></ul>
+  </div>
+  <div class="userlist">
+  <ul id="userList"></ul>
+  </div>
+  </section>
+  <footer>
+  <input type="radio" id="msgTypeTxt" name="msgType" checked>文字
+  <input type="radio" id="msgTypeDraw" name="msgType">手绘<br/>
+  <div id="msgCanvas" >
+	<canvas id="userCanvas" width="282" height="124"></canvas>
+	<input id="penRange" class="range" type="range" min=1 max=21 step=2 value=3 >
+	<div id="penContent">
+		<div id="pen" class="pen"></div>
+	</div><br/>
+	<input id="color" type="color" value="#414de2">
+	<input type="radio" id="typePen" name="penType" checked>画笔
+	<input type="radio" id="typeEraser" name="penType">橡皮
+	<br/><button id="clearBtn" type="button">清空</button>
+  </div>
+  <textarea id="msg"></textarea>
+  <br/><span>Ctrl + Enter</span><button id="sendBtn" type="button" class="send">发送</button>
+  </footer>
+<script type="text/javascript">
+
+var socket
+$(document).ready(function(){
+	Meeting.init();
+	Notice.init();
+	DrawBoard.init({
+		userCanvas : "userCanvas",
+		pen : "pen",
+		penRange : "penRange",
+		color : "color",
+		clearBtn : "clearBtn",
+		backBtn : "backBtn",
+		typePen : "typePen"
+	});
+
+	socket = io.connect(location.origin);
+	socket.on('open', function (data) {
+		Meeting.showMsg("sys", "秘密聊天室为你打开，热烈欢迎....");
+		Meeting.showUserList(data.userList);
+	});
+	socket.on('msg', function (data) {
+		Meeting.showMsg("server", "[ " + data.user + " ] 说: ", data.msg, data.msgType);
+		if (Notice.permission) {
+			Notice.showDesktopNotice();
+		}
+	});
+	socket.on('userConnected', function (data) {
+		Meeting.showMsg("sys", "....童鞋 [ " + data.user + " ]大摇大摆地来了..");
+		Meeting.showUserList(data.userList);
+	});
+	socket.on('userDisConnected', function (data) {
+		Meeting.showMsg("sys", "....坏淫 [ " + data.user + " ]悄悄地溜走了..");
+		Meeting.showUserList(data.userList);
+	});
+
+	$("#sendBtn").bind("click", function(e){
+		Meeting.sendMsg();
+		
+	}, false);
+
+	$("#msg").bind("keydown", function(e){
+		if (e.ctrlKey && e.keyCode == 13) {
+			Meeting.sendMsg();
+		};
+	}, false);
+
+	$(window).bind('beforeunload', function (e) {
+		socket.disConnect();
+		return null;
+	})
+});
+	
+</script>
+ </BODY>
+</HTML>
